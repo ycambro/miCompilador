@@ -129,6 +129,6 @@ public class Lexer {
     }
 
     public TablaSimbolos getTablaSimbolos() {
-        return tablaSimbolos;
+        return tablaSimbolos.imprimir();
     }
 }
