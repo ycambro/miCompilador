@@ -32,6 +32,7 @@ public class Lexer {
         }
     }
 
+    //Salta los espacios en blanco
     private void saltarEspacios() {
         while (caracterAct != '\0' && Character.isWhitespace(caracterAct)) {
             avanzar();
@@ -80,11 +81,13 @@ public class Lexer {
         return new Token(numero.toString(), "NUMERO");
     }
 
+    //Reporta un error en la línea actual
     private void reportarError(String lexema) {
         System.out.println("Error [Fase Léxica]: La línea " + linea + " contiene un error, lexema no reconocido: " + lexema);   
         System.exit(1);     
     }
 
+    //Imprime la tabla de símbolos
     public void imprimirTablaSimbolos() {
         tablaSimbolos.imprimir();
     }

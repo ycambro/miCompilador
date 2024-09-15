@@ -1,12 +1,12 @@
 package FaseLexica;
 public class InformacionSimbolo {
-    private int direccion;
+    private int linea;
 
-    public InformacionSimbolo(int direccion) {
-        this.direccion = direccion;
+    public InformacionSimbolo(int linea) {
+        this.linea = linea;
     }
 
     public int getLinea() {
-        return direccion;
+        return linea;
     }
 }
