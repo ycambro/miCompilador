@@ -13,17 +13,22 @@ public class TablaSimbolos {
         simbolos.put(nombre, info);
     }
 
+    public void modificar(String nombre, InformacionSimbolo info) {
+        simbolos.replace(nombre, info);
+    }
+
     public boolean existe(String nombre) {
         return simbolos.containsKey(nombre);
     }
 
-    public InformacionSimbolo obteneInformacionSimbolo(String nombre) {
+    public InformacionSimbolo obtenerInformacionSimbolo(String nombre) {
         return simbolos.get(nombre);
     }
 
     public void imprimir() {
         for (Map.Entry<String, InformacionSimbolo> entry : simbolos.entrySet()) {
-            System.out.println("Nombre: " + entry.getKey() + ", Informacion: " + entry.getValue());
+            InformacionSimbolo informacion = entry.getValue();
+            System.out.println("Nombre: " + entry.getKey() + "\nInformacion: " + "\n - Linea: " + informacion.getLinea());
         }
     }
 }

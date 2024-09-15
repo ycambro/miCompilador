@@ -6,7 +6,7 @@ public class InformacionSimbolo {
         this.direccion = direccion;
     }
 
-    public int getDireccion() {
+    public int getLinea() {
         return direccion;
     }
 }

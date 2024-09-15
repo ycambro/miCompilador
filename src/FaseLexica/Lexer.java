@@ -85,6 +85,10 @@ public class Lexer {
         System.exit(1);     
     }
 
+    public void imprimirTablaSimbolos() {
+        tablaSimbolos.imprimir();
+    }
+
     //Esta función lee los tokens y revisa su validación, además de agregarlos a una lista para imprimir al final
     public List<Token> obtenerTokens() {
         List<Token> tokens = new ArrayList<>();
@@ -126,9 +130,5 @@ public class Lexer {
             }
         }
         return tokens;
-    }
-
-    public TablaSimbolos getTablaSimbolos() {
-        return tablaSimbolos.imprimir();
     }
 }

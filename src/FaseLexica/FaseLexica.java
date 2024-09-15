@@ -25,7 +25,6 @@ public class FaseLexica {
         for (Token token : tokens) {
             System.out.println(token);
         }
-
     }
 
     private static String leerArchivo(String rutaArchivo) {
