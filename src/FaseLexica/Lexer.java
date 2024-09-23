@@ -39,7 +39,7 @@ public class Lexer {
         }
     }
 
-    //Revisa el identificador y verifica que sea válido
+    //Revisa el identificador y verifica que sea válido usando el character.isLetter
     private Token leerIdentificador() {
         StringBuilder identificador = new StringBuilder();
         while (caracterAct != '\0' && Character.isLetter(caracterAct)) {
@@ -63,7 +63,7 @@ public class Lexer {
         return new Token(identificadorStr, "IDENTIFICADOR");
     }
 
-    //Revisa el número y verifica que sea válido
+    //Revisa el número y verifica que sea válido usando el character.isDigit
     private Token leerNumero() {
         StringBuilder numero = new StringBuilder();
         while (caracterAct != '\0' && Character.isDigit(caracterAct)) {
