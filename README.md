@@ -1,7 +1,7 @@
 ## Estudiantes
 
-Marco Álvarez
-Yurgen Cambronero
+Marco Álvarez, 
+Yurgen Cambronero, 
 Manfred Jones
 
 ## Compilación
