@@ -10,7 +10,7 @@ En la carpeta principal, es decir, en miCompilador, ejecutar el siguiente comand
 
 - `compilar java`: javac -d bin -sourcepath src -cp lib/* src/FaseLexica/FaseLexica.java
 
-## Dependency Management
+## Ejecución
 
 - `ejecutar java`: java -cp bin;lib/* FaseLexica.FaseLexica ej.txt
 
