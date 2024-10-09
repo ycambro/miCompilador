@@ -8,24 +8,21 @@ import java.nio.file.Paths;
 public class App {
     public static void main(String[] args) {
         //Espera el argumento de la ruta del archivo
-        if (args.length > 1) {
+        if (args.length < 1) {
             System.out.println("Uso: [NOMBRE DEL PROGRAMA] [ARCHIVO DE ENTRADA] [ARCHIVO SALIDA]");
             return;
         }
 
-        //String input = leerArchivo(args[0]);
-        String input = leerArchivo("ej.txt");
+        String input = leerArchivo(args[0]);
         if (input == null) {
             return;
         }
 
         // Se inicia la fase léxica
         FaseLexica faseLexica = new FaseLexica(input);
-        faseLexica.obtenerTablaSimbolos().guardarEnArchivo("tabla.txt");
-        //faseLexica.obtenerTablaSimbolos().guardarEnArchivo(args[1]);
 
         // Se inicia la fase sintáctica
-        FaseSintactica faseSintactica = new FaseSintactica(faseLexica.obtenerTokens(), faseLexica.obtenerTablaSimbolos(), "tabla.txt");
+        FaseSintactica faseSintactica = new FaseSintactica(faseLexica.obtenerTokens(), faseLexica.obtenerTablaSimbolos(), args[1]);
         faseSintactica.analizarPrograma();
 
     }

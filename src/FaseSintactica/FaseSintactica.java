@@ -53,8 +53,10 @@ public class FaseSintactica {
                 }
                 return true;
             }
+            errorSintactico("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token ;");
+            return false;
         }
-        errorSintactico("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token ;");
+        errorSintactico("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token IDENTIFICADOR");
         return false;
     }
 
