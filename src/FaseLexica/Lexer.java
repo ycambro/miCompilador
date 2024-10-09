@@ -28,6 +28,9 @@ public class Lexer {
             caracterAct = entrada.charAt(pos);
             if (caracterAct == '\n') {
                 linea ++;
+                if (pos + 1 >= length || entrada.charAt(pos + 1) == '\n') {
+                    reportarError("\\n");
+                }
             }
         }
     }
@@ -54,13 +57,16 @@ public class Lexer {
             }
             reportarError(identificador.toString());
         }
+        if (identificador.length() > 12) {
+            reportarError(identificador.toString());
+        }
         String identificadorStr = identificador.toString();
 
         if (!tablaSimbolos.existe(identificadorStr)) {
             tablaSimbolos.agregar(identificadorStr, new InformacionSimbolo(linea));
         }
 
-        return new Token(identificadorStr, "IDENTIFICADOR");
+        return new Token(identificadorStr, "IDENTIFICADOR", linea);
     }
 
     //Revisa el número y verifica que sea válido usando el character.isDigit
@@ -78,7 +84,7 @@ public class Lexer {
             reportarError(numero.toString());
         }
 
-        return new Token(numero.toString(), "NUMERO");
+        return new Token(numero.toString(), "NUMERO", linea);
     }
 
     //Reporta un error en la línea actual
@@ -90,6 +96,11 @@ public class Lexer {
     //Imprime la tabla de símbolos
     public void imprimirTablaSimbolos() {
         tablaSimbolos.imprimir();
+    }
+
+    // 
+    public TablaSimbolos getTablaSimbolos() {
+        return tablaSimbolos;
     }
 
     //Esta función lee los tokens y revisa su validación, además de agregarlos a una lista para imprimir al final
@@ -104,28 +115,28 @@ public class Lexer {
             } else if (Character.isDigit(caracterAct)) {
                 tokens.add(leerNumero());
             } else if (caracterAct == '+') {
-                tokens.add(new Token("+", "SUMA"));
+                tokens.add(new Token("+", "SUMA", linea));
                 avanzar();
             } else if (caracterAct == '-') {
-                tokens.add(new Token("-", "RESTA"));
+                tokens.add(new Token("-", "RESTA", linea));
                 avanzar();
             } else if (caracterAct == '*') {
-                tokens.add(new Token("*", "MULTIPLICACION"));
+                tokens.add(new Token("*", "MULTIPLICACION", linea));
                 avanzar();
             } else if (caracterAct == '/') {
-                tokens.add(new Token("/", "DIVISION"));
+                tokens.add(new Token("/", "DIVISION", linea));
                 avanzar();
             } else if (caracterAct == '=') {
-                tokens.add(new Token("=", "ASIGNACION"));
+                tokens.add(new Token("=", "ASIGNACION", linea));
                 avanzar();
             } else if (caracterAct == ';') {
-                tokens.add(new Token(";", "PUNTO_COMA"));
+                tokens.add(new Token(";", "PUNTO_COMA", linea));
                 avanzar();
             } else if (caracterAct == '(') {
-                tokens.add(new Token("(", "PARENTESIS_IZQ"));
+                tokens.add(new Token("(", "PARENTESIS_IZQ", linea));
                 avanzar();
             } else if (caracterAct == ')') {
-                tokens.add(new Token(")", "PARENTESIS_DER"));
+                tokens.add(new Token(")", "PARENTESIS_DER", linea));
                 avanzar();
             } else {
                 reportarError(String.valueOf(caracterAct));
