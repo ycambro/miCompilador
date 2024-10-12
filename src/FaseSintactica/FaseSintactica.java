@@ -12,7 +12,6 @@ public class FaseSintactica {
     private int posicion;
     private TablaSimbolos tablaSimbolos;
     private List<String> ListaDeIdentificadores;
-    private int error;
     private String archivo;
 
     public FaseSintactica(List<Token> tokens, TablaSimbolos tablaSimbolos, String archivo) {
@@ -21,14 +20,13 @@ public class FaseSintactica {
         this.tablaSimbolos = tablaSimbolos;
         this.ListaDeIdentificadores = new ArrayList<>();
         this.archivo = archivo;
-        this.error = 0;
     }
 
     // Se inicia el análisis del programa, si se encuentra algun error de token no esperado se imprime el error y se termina el programa
     public void analizarPrograma() {
         programa();
         tablaSimbolos.guardarEnArchivo(archivo);
-        System.exit(1);
+        System.out.println("Confirmación [Fase Sintáctica]: Análisis sintáctico completado con éxito.");
     }
 
     // Se verifica la producción 'programa'
@@ -38,25 +36,20 @@ public class FaseSintactica {
                 ListaDeIdentificadores.clear();
                 while (expresion()) {
                     if (!consumirToken("PUNTO_COMA")) {
-                        // Se elimina el identificador de la Tabla de Símbolos ya que tenía un error
-                        tablaSimbolos.eliminar(ListaDeIdentificadores.get(0));
-
-                        if (consumirToken("ASIGNACION") && error == 0) {
-                            errorSintactico("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
-                        } else if (error == 0) {
-                            errorSintactico("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token ;");
+                        if (consumirToken("ASIGNACION")) {
+                            reportarError("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
                         }
-                        error = 0;
+                        reportarError("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token ;");
                         return false;
                     }
                     ListaDeIdentificadores.clear();
                 }
                 return true;
             }
-            errorSintactico("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token ;");
+            reportarError("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token ;");
             return false;
         }
-        errorSintactico("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token IDENTIFICADOR");
+        reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token IDENTIFICADOR");
         return false;
     }
 
@@ -71,7 +64,7 @@ public class FaseSintactica {
         if (termino()) {
             while (consumirToken("SUMA") || consumirToken("RESTA")) {
                 if (!termino()) {
-                    errorSintactico("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
+                    reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
                     return false;
                 }
             }
@@ -85,7 +78,7 @@ public class FaseSintactica {
         if (factor()) {
             while (consumirToken("MULTIPLICACION") || consumirToken("DIVISION")) {
                 if (!factor()) {
-                    errorSintactico("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
+                    reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
                     return false;
                 }
             }
@@ -105,7 +98,7 @@ public class FaseSintactica {
             if (expresion() && consumirToken("PARENTESIS_DER")) {
                 return true;
             }
-            errorSintactico("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token )");
+            reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token )");
             return false;
         }
         return false;
@@ -134,8 +127,12 @@ public class FaseSintactica {
     }
 
     // Se imprime un mensaje de error de token "esperado" si se encontró alguno y se termina el programa
-    private void errorSintactico(String mensaje) {
+    private void reportarError(String mensaje) {
         System.out.println("Error [Fase Sintáctica]: " + mensaje);
-        error++;
+
+        // Se elimina el identificador de la Tabla de Símbolos ya que tenía un error
+        tablaSimbolos.eliminar(ListaDeIdentificadores.get(0));
+        tablaSimbolos.guardarEnArchivo(archivo);
+        System.exit(1);
     }
 }

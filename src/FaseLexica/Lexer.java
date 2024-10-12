@@ -28,9 +28,6 @@ public class Lexer {
             caracterAct = entrada.charAt(pos);
             if (caracterAct == '\n') {
                 linea ++;
-                if (pos + 1 >= length || entrada.charAt(pos + 1) == '\n') {
-                    reportarError("\\n");
-                }
             }
         }
     }
@@ -138,11 +135,14 @@ public class Lexer {
             } else if (caracterAct == ')') {
                 tokens.add(new Token(")", "PARENTESIS_DER", linea));
                 avanzar();
+            } else if(caracterAct == '\0') {
+                break;
             } else {
                 reportarError(String.valueOf(caracterAct));
                 avanzar();
             }
         }
+        System.out.println("Confirmación [Fase Léxica]: Análisis léxico completado con éxito.");
         return tokens;
     }
 }
