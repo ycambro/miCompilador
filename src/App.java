@@ -14,7 +14,7 @@ public class App {
         }
 
         String input = leerArchivo(args[0]);
-        if (input == null) {
+        if (input == null || input.isEmpty()) {
             return;
         }
 

@@ -131,7 +131,9 @@ public class FaseSintactica {
         System.out.println("Error [Fase Sintáctica]: " + mensaje);
 
         // Se elimina el identificador de la Tabla de Símbolos ya que tenía un error
-        tablaSimbolos.eliminar(ListaDeIdentificadores.get(0));
+        if (ListaDeIdentificadores.size() > 0) {
+            tablaSimbolos.eliminar(ListaDeIdentificadores.get(0));
+        }
         tablaSimbolos.guardarEnArchivo(archivo);
         System.exit(1);
     }

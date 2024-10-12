@@ -1,6 +1,10 @@
 Nombre: a
 Informacion: 
- - Linea: 1
+ - Linea: 2
+
+Nombre: b
+Informacion: 
+ - Linea: 2
 
 Nombre: c
 Informacion: 
