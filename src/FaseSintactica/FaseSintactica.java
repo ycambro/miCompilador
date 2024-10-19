@@ -22,14 +22,14 @@ public class FaseSintactica {
         this.archivo = archivo;
     }
 
-    // Se inicia el análisis del programa, si se encuentra algun error de token no esperado se imprime el error y se termina el programa
+    // Se inicia el análisis del programa, se llama a la producción 'programa' y se guarda la Tabla de Símbolos en un archivo si todo sale bien.
     public void analizarPrograma() {
         programa();
         tablaSimbolos.guardarEnArchivo(archivo);
         System.out.println("Confirmación [Fase Sintáctica]: Análisis sintáctico completado con éxito.");
     }
 
-    // Se verifica la producción 'programa'
+    // Se verifica la producción 'programa' si hay un error de falta de identificador se reporta y se termina el programa, al igual si falta un punto y coma
     private boolean programa() {
         if (expresion()) {
             if (consumirToken("PUNTO_COMA")) {
