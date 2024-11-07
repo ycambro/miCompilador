@@ -74,7 +74,7 @@ public class FaseSintactica {
         NodoAST nodoTermino = termino();
         if (nodoTermino != null) {
             while (consumirToken("SUMA") || consumirToken("RESTA")) {
-                String operador = tokens.get(posicion - 1).getValor(); // SUMA o RESTA
+                String operador = tokens.get(posicion - 1).getValor();
                 NodoAST nodoDerecho = termino();
                 if (nodoDerecho == null) {
                     reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
@@ -93,7 +93,7 @@ public class FaseSintactica {
         NodoAST nodoFactor = factor();
         if (nodoFactor != null) {
             while (consumirToken("MULTIPLICACION") || consumirToken("DIVISION")) {
-                String operador = tokens.get(posicion - 1).getValor(); // MULTIPLICACION o DIVISION
+                String operador = tokens.get(posicion - 1).getValor();
                 NodoAST nodoDerecho = factor();
                 if (nodoDerecho == null) {
                     reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");

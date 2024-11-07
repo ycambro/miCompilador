@@ -27,11 +27,7 @@ public class FaseSemantica implements IVisitanteAST {
         NodoAST izquierdo = nodo.getIzquierdo();
         NodoAST derecho = nodo.getDerecho();
 
-        // Se recorre los hijos del nodo
-        izquierdo.aceptar(this);
-        derecho.aceptar(this);
-
-        // Verificar si es una operación de división y si el derecho es 0
+        // Verificar si es una operación de división y si el hijo derecho es 0
         if (nodo.getOperador().equals("/")) {
             if (derecho instanceof NodoNumero) {
                 NodoNumero nodoDerecho = (NodoNumero) derecho;
@@ -40,6 +36,10 @@ public class FaseSemantica implements IVisitanteAST {
                 }
             }
         }
+
+        // Se recorre los hijos del nodo
+        izquierdo.aceptar(this);
+        derecho.aceptar(this);
     }
 
     @Override
