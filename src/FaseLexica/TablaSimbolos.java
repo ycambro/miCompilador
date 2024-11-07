@@ -24,6 +24,20 @@ public class TablaSimbolos {
         simbolos.replace(nombre, info);
     }
 
+    // Marca un simbolo como declarado
+    public void declarar(String nombre) {
+        InformacionSimbolo info = simbolos.get(nombre);
+        info.setEstaDeclarado(true);
+        simbolos.replace(nombre, info);
+    }
+
+    // Cambia la linea de un simbolo si se re declaro en otra linea
+    public void cambiarLinea(String nombre, int linea) {
+        InformacionSimbolo info = simbolos.get(nombre);
+        info.setLinea(linea);
+        simbolos.replace(nombre, info);
+    }
+
     // Verifica si un simbolo existe en la tabla de simbolos
     public boolean existe(String nombre) {
         return simbolos.containsKey(nombre);

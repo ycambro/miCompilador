@@ -1,4 +1,5 @@
 import FaseLexica.FaseLexica;
+import FaseSemantica.FaseSemantica;
 import FaseSintactica.FaseSintactica;
 
 import java.io.IOException;
@@ -8,12 +9,13 @@ import java.nio.file.Paths;
 public class App {
     public static void main(String[] args) {
         //Espera el argumento de la ruta del archivo
-        if (args.length < 1) {
-            System.out.println("Uso: [NOMBRE DEL PROGRAMA] [ARCHIVO DE ENTRADA] [ARCHIVO SALIDA]");
+        if (args.length > 1) {
+            System.out.println("Uso: [NOMBRE DEL PROGRAMA] [ARCHIVO DE ENTRADA]");
             return;
         }
 
-        String input = leerArchivo(args[0]);
+        //String input = leerArchivo(args[0]);
+        String input = leerArchivo("ej.txt");
         if (input == null || input.isEmpty()) {
             return;
         }
@@ -22,8 +24,11 @@ public class App {
         FaseLexica faseLexica = new FaseLexica(input);
 
         // Se inicia la fase sintáctica
-        FaseSintactica faseSintactica = new FaseSintactica(faseLexica.obtenerTokens(), faseLexica.obtenerTablaSimbolos(), args[1]);
-        faseSintactica.analizarPrograma();
+        FaseSintactica faseSintactica = new FaseSintactica(faseLexica.obtenerTokens(), faseLexica.obtenerTablaSimbolos());
+
+        // Se inicia la fase semántica
+        FaseSemantica faseSemantica = new FaseSemantica(faseSintactica.obtenerTablaSimbolos());
+        faseSemantica.analizar(faseSintactica.analizarPrograma());
 
     }
 

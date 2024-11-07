@@ -5,6 +5,11 @@ import java.util.ArrayList;
 
 import FaseLexica.TablaSimbolos;
 import FaseLexica.Token;
+import FaseSintactica.AST.NodoAST;
+import FaseSintactica.AST.NodoIdentificador;
+import FaseSintactica.AST.NodoNumero;
+import FaseSintactica.AST.NodoOperacion;
+import FaseSintactica.AST.NodoPrograma;
 
 public class FaseSintactica {
 
@@ -12,97 +17,117 @@ public class FaseSintactica {
     private int posicion;
     private TablaSimbolos tablaSimbolos;
     private List<String> ListaDeIdentificadores;
-    private String archivo;
 
-    public FaseSintactica(List<Token> tokens, TablaSimbolos tablaSimbolos, String archivo) {
+    public FaseSintactica(List<Token> tokens, TablaSimbolos tablaSimbolos) {
         this.tokens = tokens;
         this.posicion = 0;
         this.tablaSimbolos = tablaSimbolos;
         this.ListaDeIdentificadores = new ArrayList<>();
-        this.archivo = archivo;
     }
 
     // Se inicia el análisis del programa, se llama a la producción 'programa' y se guarda la Tabla de Símbolos en un archivo si todo sale bien.
-    public void analizarPrograma() {
-        programa();
-        tablaSimbolos.guardarEnArchivo(archivo);
+    public NodoAST analizarPrograma() {
+        NodoAST ast = programa();  // Devuelve el AST en lugar de booleano
         System.out.println("Confirmación [Fase Sintáctica]: Análisis sintáctico completado con éxito.");
+        return ast;
     }
 
-    // Se verifica la producción 'programa' si hay un error de falta de identificador se reporta y se termina el programa, al igual si falta un punto y coma
-    private boolean programa() {
-        if (expresion()) {
-            if (consumirToken("PUNTO_COMA")) {
-                ListaDeIdentificadores.clear();
-                while (expresion()) {
-                    if (!consumirToken("PUNTO_COMA")) {
-                        if (consumirToken("ASIGNACION")) {
-                            reportarError("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
-                        }
-                        reportarError("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token ;");
-                        return false;
-                    }
-                    ListaDeIdentificadores.clear();
+    public TablaSimbolos obtenerTablaSimbolos() {
+        return tablaSimbolos;
+    }
+
+    // Se verifica la producción 'programa' si hay un error de falta de identificador se reporta y se termina el programa, al igual si falta un punto y coma.
+    private NodoAST programa() {
+        NodoPrograma nodoPrograma = new NodoPrograma(); // Crear un nodo programa
+        NodoAST nodoExpresion = expresion(); // Verificar la producción 'expresion'
+
+        if (nodoExpresion != null && consumirToken("PUNTO_COMA")) {
+            nodoPrograma.agregarExpresion(nodoExpresion);  // Agrega la expresión al nodo programa
+            ListaDeIdentificadores.clear();
+            
+            while (posicion <= tokens.size() && (nodoExpresion = expresion()) != null) {
+                if (!consumirToken("PUNTO_COMA")) {
+                    reportarError("Falta token ;");
+                    return null;
                 }
-                return true;
+                nodoPrograma.agregarExpresion(nodoExpresion);  // Agrega la expresion al nodo programa
+                ListaDeIdentificadores.clear();
             }
-            reportarError("La línea " + tokens.get(posicion-1).getLinea() + " contiene un error en su gramática, falta token ;");
-            return false;
+            return nodoPrograma;  // Retorna el nodo del programa con todas las expresiones
         }
-        reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token IDENTIFICADOR");
-        return false;
+        reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token IDENTIFICADOR o NUMERO");
+        return null;
     }
 
     // Se verifica la producción 'expresion'
-    private boolean expresion() {
+    private NodoAST expresion() {
         int backup = posicion;
-        if (identificador() && consumirToken("ASIGNACION") && expresion()) {
-            return true;
+        if (identificador() && consumirToken("ASIGNACION")) {
+            tablaSimbolos.declarar(ListaDeIdentificadores.get(0)); // Se declara el identificador en la Tabla de Símbolos
+            tablaSimbolos.cambiarLinea(ListaDeIdentificadores.get(0), tokens.get(posicion - 1).getLinea()); // Se cambia la línea del identificador en la Tabla de Símbolos
+            NodoAST ladoDerecho = expresion();
+            NodoIdentificador nodoIdentificador = new NodoIdentificador(ListaDeIdentificadores.get(0));
+            return new NodoOperacion("=", nodoIdentificador, ladoDerecho);
         }
         // Volvemos a la posición guardada si el if no se cumple
         posicion = backup;
-        if (termino()) {
+        NodoAST nodoTermino = termino();
+        if (nodoTermino != null) {
             while (consumirToken("SUMA") || consumirToken("RESTA")) {
-                if (!termino()) {
+                String operador = tokens.get(posicion - 1).getValor(); // SUMA o RESTA
+                NodoAST nodoDerecho = termino();
+                if (nodoDerecho == null) {
                     reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
-                    return false;
+                    return null;
                 }
+                nodoTermino = new NodoOperacion(operador, nodoTermino, nodoDerecho);
             }
-            return true;
+            return nodoTermino;
         }
-        return false;
+        return null;
     }
 
+
     // Se verifica la producción 'termino'
-    private boolean termino() {
-        if (factor()) {
+    private NodoAST termino() {
+        NodoAST nodoFactor = factor();
+        if (nodoFactor != null) {
             while (consumirToken("MULTIPLICACION") || consumirToken("DIVISION")) {
-                if (!factor()) {
+                String operador = tokens.get(posicion - 1).getValor(); // MULTIPLICACION o DIVISION
+                NodoAST nodoDerecho = factor();
+                if (nodoDerecho == null) {
                     reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token NUMERO o IDENTIFICADOR");
-                    return false;
+                    return null;
                 }
+                nodoFactor = new NodoOperacion(operador, nodoFactor, nodoDerecho);
             }
-            return true;
+            return nodoFactor;
         }
-        return false;
+        return null;
     }
 
     // Se verifica la producción 'factor'
-    private boolean factor() {
-        int backup = posicion;
-        if (identificador() || numero()) {
-            return true;
-        }
-        posicion = backup;
-        if (consumirToken("PARENTESIS_IZQ")) {
-            if (expresion() && consumirToken("PARENTESIS_DER")) {
-                return true;
-            }
-            reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token )");
-            return false;
-        }
-        return false;
+    private NodoAST factor() {
+    int backup = posicion;
+    if (identificador()) {
+        return new NodoIdentificador(ListaDeIdentificadores.get(ListaDeIdentificadores.size() - 1)); //Se agrega el último identificador de la lista ya que es el más reciente
     }
+    posicion = backup;
+    if (numero()) {
+        return new NodoNumero(Integer.parseInt(tokens.get(posicion - 1).getValor()));
+    }
+    posicion = backup;
+    if (consumirToken("PARENTESIS_IZQ")) {
+        NodoAST nodoExpresion = expresion();
+        if (nodoExpresion != null && consumirToken("PARENTESIS_DER")) {
+            return nodoExpresion;
+        }
+        reportarError("La línea " + tokens.get(posicion).getLinea() + " contiene un error en su gramática, falta token )");
+        return null;
+    }
+    return null;
+}
+
 
     // Se verifica la producción 'numero'
     private boolean numero() {
@@ -134,7 +159,6 @@ public class FaseSintactica {
         if (ListaDeIdentificadores.size() > 0) {
             tablaSimbolos.eliminar(ListaDeIdentificadores.get(0));
         }
-        tablaSimbolos.guardarEnArchivo(archivo);
         System.exit(1);
     }
 }
