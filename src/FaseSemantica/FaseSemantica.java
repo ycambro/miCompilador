@@ -27,7 +27,7 @@ public class FaseSemantica implements IVisitanteAST {
         NodoAST izquierdo = nodo.getIzquierdo();
         NodoAST derecho = nodo.getDerecho();
 
-        // Recorrer los hijos del nodo
+        // Se recorre los hijos del nodo
         izquierdo.aceptar(this);
         derecho.aceptar(this);
 
