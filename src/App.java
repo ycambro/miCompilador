@@ -9,13 +9,12 @@ import java.nio.file.Paths;
 public class App {
     public static void main(String[] args) {
         //Espera el argumento de la ruta del archivo
-        if (args.length > 1) {
+        if (args.length != 1) {
             System.out.println("Uso: [NOMBRE DEL PROGRAMA] [ARCHIVO DE ENTRADA]");
             return;
         }
 
-        //String input = leerArchivo(args[0]);
-        String input = leerArchivo("ej.txt");
+        String input = leerArchivo(args[0]);
         if (input == null || input.isEmpty()) {
             return;
         }
