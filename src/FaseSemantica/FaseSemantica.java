@@ -10,6 +10,7 @@ import FaseSintactica.Visitante.IVisitanteAST;
 public class FaseSemantica implements IVisitanteAST {
     private TablaSimbolos tablaSimbolos;
     private int linea;
+    private String identificadorBackup;
 
     public FaseSemantica(TablaSimbolos tablaSimbolos) {
         this.tablaSimbolos = tablaSimbolos;
@@ -37,8 +38,17 @@ public class FaseSemantica implements IVisitanteAST {
             }
         }
 
-        // Se recorre los hijos del nodo
+        // Se recorre el hijo izquierdo
         izquierdo.aceptar(this);
+
+        // Verificar si es una asignación a sí mismo
+        if (nodo.getOperador().equals("=")) {
+            if (izquierdo instanceof NodoIdentificador) {
+                identificadorBackup = ((NodoIdentificador) izquierdo).getNombre();
+            }
+        }
+
+        // Se recorre el hijo derecho
         derecho.aceptar(this);
     }
 
@@ -53,6 +63,9 @@ public class FaseSemantica implements IVisitanteAST {
         linea = tablaSimbolos.obtenerInformacionSimbolo(nodo.getNombre()).getLinea();
         if (!tablaSimbolos.existe(nodo.getNombre()) || !tablaSimbolos.obtenerInformacionSimbolo(nodo.getNombre()).getEstaDeclarado()) {
             reportarError("La línea " + linea + " contiene un error, no declarado identificador " + nodo.getNombre() +".");
+        }
+        if (nodo.getNombre().equals(identificadorBackup)) {
+            reportarError("La línea " + linea + " contiene un error, asignación a sí mismo del identificador " + nodo.getNombre() + ".");
         }
     }
 
