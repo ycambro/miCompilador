@@ -14,20 +14,21 @@ public class NodoOperacion extends NodoAST {
         this.derecho = derecho;
     }
 
-    public String getOperador() {
-        return operador;
-    }
-
-    public NodoAST getIzquierdo() {
+    public NodoAST obtenerIzquierdo() {
         return izquierdo;
     }
 
-    public NodoAST getDerecho() {
+    public NodoAST obtenerDerecho() {
         return derecho;
     }
 
     @Override
     public void aceptar(IVisitanteAST visitor) {
         visitor.visitar(this);
+    }
+
+    @Override
+    public String obtenerValor() {
+        return operador;
     }
 }

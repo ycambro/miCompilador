@@ -28,4 +28,10 @@ public class NodoPrograma extends NodoAST {
             expresion.aceptar(visitor);
         }
     }
+
+    @Override
+    public String obtenerValor() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'obtenerValor'");
+    }
 }

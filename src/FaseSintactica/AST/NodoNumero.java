@@ -10,12 +10,13 @@ public class NodoNumero extends NodoAST {
         this.valor = valor;
     }
 
-    public int getValor() {
-        return valor;
-    }
-
     @Override
     public void aceptar(IVisitanteAST visitor) {
         visitor.visitar(this);
+    }
+
+    @Override
+    public String obtenerValor() {
+        return String.valueOf(valor);
     }
 }

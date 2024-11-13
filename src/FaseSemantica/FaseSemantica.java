@@ -25,14 +25,14 @@ public class FaseSemantica implements IVisitanteAST {
 
     @Override
     public void visitar(NodoOperacion nodo) {
-        NodoAST izquierdo = nodo.getIzquierdo();
-        NodoAST derecho = nodo.getDerecho();
+        NodoAST izquierdo = nodo.obtenerIzquierdo();
+        NodoAST derecho = nodo.obtenerDerecho();
 
         // Verificar si es una operación de división y si el hijo derecho es 0
-        if (nodo.getOperador().equals("/")) {
+        if (nodo.obtenerValor().equals("/")) {
             if (derecho instanceof NodoNumero) {
                 NodoNumero nodoDerecho = (NodoNumero) derecho;
-                if (nodoDerecho.getValor() == 0) {
+                if (nodoDerecho.obtenerValor() == "0") {
                     reportarError("La línea " + linea + " contiene un error, operación inválida división por 0.");
                 }
             }
@@ -42,9 +42,9 @@ public class FaseSemantica implements IVisitanteAST {
         izquierdo.aceptar(this);
 
         // Verificar si es una asignación a sí mismo
-        if (nodo.getOperador().equals("=")) {
+        if (nodo.obtenerValor().equals("=")) {
             if (izquierdo instanceof NodoIdentificador) {
-                identificadorBackup = ((NodoIdentificador) izquierdo).getNombre();
+                identificadorBackup = izquierdo.obtenerValor();
             }
         }
 
@@ -60,12 +60,12 @@ public class FaseSemantica implements IVisitanteAST {
     // Verifica si el identificador está declarado en la tabla de símbolos
     @Override
     public void visitar(NodoIdentificador nodo) {
-        linea = tablaSimbolos.obtenerInformacionSimbolo(nodo.getNombre()).getLinea();
-        if (!tablaSimbolos.existe(nodo.getNombre()) || !tablaSimbolos.obtenerInformacionSimbolo(nodo.getNombre()).getEstaDeclarado()) {
-            reportarError("La línea " + linea + " contiene un error, no declarado identificador " + nodo.getNombre() +".");
+        linea = tablaSimbolos.obtenerInformacionSimbolo(nodo.obtenerValor()).getLinea();
+        if (!tablaSimbolos.existe(nodo.obtenerValor()) || !tablaSimbolos.obtenerInformacionSimbolo(nodo.obtenerValor()).getEstaDeclarado()) {
+            reportarError("La línea " + linea + " contiene un error, no declarado identificador " + nodo.obtenerValor() +".");
         }
-        if (nodo.getNombre().equals(identificadorBackup)) {
-            reportarError("La línea " + linea + " contiene un error, asignación a sí mismo del identificador " + nodo.getNombre() + ".");
+        if (nodo.obtenerValor().equals(identificadorBackup)) {
+            reportarError("La línea " + linea + " contiene un error, asignación a sí mismo del identificador " + nodo.obtenerValor() + ".");
         }
     }
 

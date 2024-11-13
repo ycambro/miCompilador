@@ -10,12 +10,13 @@ public class NodoIdentificador extends NodoAST {
         this.nombre = nombre;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
     @Override
     public void aceptar(IVisitanteAST visitor) {
         visitor.visitar(this);
+    }
+
+    @Override
+    public String obtenerValor() {
+        return nombre;
     }
 }

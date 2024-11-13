@@ -1,10 +1,14 @@
 import FaseLexica.FaseLexica;
+import FaseLexica.TablaSimbolos;
 import FaseSemantica.FaseSemantica;
 import FaseSintactica.FaseSintactica;
+import FaseSintactica.AST.NodoAST;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import FaseGeneracionCodigo.GeneradorCodigo;
 
 public class App {
     public static void main(String[] args) {
@@ -21,13 +25,19 @@ public class App {
 
         // Se inicia la fase léxica
         FaseLexica faseLexica = new FaseLexica(input);
+        TablaSimbolos tablaSimbolos = faseLexica.obtenerTablaSimbolos();
 
         // Se inicia la fase sintáctica
-        FaseSintactica faseSintactica = new FaseSintactica(faseLexica.obtenerTokens(), faseLexica.obtenerTablaSimbolos());
+        FaseSintactica faseSintactica = new FaseSintactica(faseLexica.obtenerTokens(), tablaSimbolos);
+        NodoAST ast = faseSintactica.analizarPrograma();
 
         // Se inicia la fase semántica
         FaseSemantica faseSemantica = new FaseSemantica(faseSintactica.obtenerTablaSimbolos());
-        faseSemantica.analizar(faseSintactica.analizarPrograma());
+        faseSemantica.analizar(ast);
+
+        // Se inicia la fase de generación de código
+        GeneradorCodigo generadorCodigo = new GeneradorCodigo();
+        generadorCodigo.generarCodigo(ast);
 
     }
 
