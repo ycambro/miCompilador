@@ -17,6 +17,7 @@ public class FaseSintactica {
     private int posicion;
     private TablaSimbolos tablaSimbolos;
     private List<String> ListaDeIdentificadores;
+    private String identificadorADeclarar;
 
     public FaseSintactica(List<Token> tokens, TablaSimbolos tablaSimbolos) {
         this.tokens = tokens;
@@ -43,6 +44,12 @@ public class FaseSintactica {
 
         if (nodoExpresion != null && consumirToken("PUNTO_COMA")) {
             nodoPrograma.agregarExpresion(nodoExpresion);  // Agrega la expresión al nodo programa
+
+            identificadorADeclarar = ListaDeIdentificadores.get(0);
+            ListaDeIdentificadores.removeFirst(); // Se elimina el identificador de la lista
+            if (!tablaSimbolos.obtenerInformacionSimbolo(identificadorADeclarar).getEstaDeclarado() && !ListaDeIdentificadores.contains(identificadorADeclarar)) {
+                tablaSimbolos.declarar(identificadorADeclarar); // Se declara el identificador en la Tabla de Símbolos
+            }
             ListaDeIdentificadores.clear();
             
             while (posicion <= tokens.size() && (nodoExpresion = expresion()) != null) {
@@ -51,6 +58,12 @@ public class FaseSintactica {
                     return null;
                 }
                 nodoPrograma.agregarExpresion(nodoExpresion);  // Agrega la expresion al nodo programa
+
+                identificadorADeclarar = ListaDeIdentificadores.get(0);
+                ListaDeIdentificadores.removeFirst(); // Se elimina el identificador de la lista
+                if (!tablaSimbolos.obtenerInformacionSimbolo(identificadorADeclarar).getEstaDeclarado() && !ListaDeIdentificadores.contains(identificadorADeclarar)) {
+                    tablaSimbolos.declarar(identificadorADeclarar); // Se declara el identificador en la Tabla de Símbolos
+                }
                 ListaDeIdentificadores.clear();
             }
             return nodoPrograma;  // Retorna el nodo del programa con todas las expresiones
@@ -63,7 +76,6 @@ public class FaseSintactica {
     private NodoAST expresion() {
         int backup = posicion;
         if (identificador() && consumirToken("ASIGNACION")) {
-            tablaSimbolos.declarar(ListaDeIdentificadores.get(0)); // Se declara el identificador en la Tabla de Símbolos
             tablaSimbolos.cambiarLinea(ListaDeIdentificadores.get(0), tokens.get(posicion - 1).getLinea()); // Se cambia la línea del identificador en la Tabla de Símbolos
             NodoAST ladoDerecho = expresion();
             NodoIdentificador nodoIdentificador = new NodoIdentificador(ListaDeIdentificadores.get(0));

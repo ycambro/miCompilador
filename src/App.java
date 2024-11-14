@@ -3,12 +3,14 @@ import FaseLexica.TablaSimbolos;
 import FaseSemantica.FaseSemantica;
 import FaseSintactica.FaseSintactica;
 import FaseSintactica.AST.NodoAST;
+import FaseSintactica.Visitante.IVisitanteAST;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import FaseGeneracionCodigo.GeneradorCodigo;
+import FaseGeneracionCodigo.GuardaCodigoSh;
 
 public class App {
     public static void main(String[] args) {
@@ -32,12 +34,17 @@ public class App {
         NodoAST ast = faseSintactica.analizarPrograma();
 
         // Se inicia la fase semántica
-        FaseSemantica faseSemantica = new FaseSemantica(faseSintactica.obtenerTablaSimbolos());
-        faseSemantica.analizar(ast);
+        IVisitanteAST faseSemantica = new FaseSemantica(faseSintactica.obtenerTablaSimbolos());
+        ast.aceptar(faseSemantica);
+        System.out.println("Confirmación [Fase Semántica]: Análisis semántico completado con éxito.");
 
         // Se inicia la fase de generación de código
-        GeneradorCodigo generadorCodigo = new GeneradorCodigo();
-        generadorCodigo.generarCodigo(ast);
+        IVisitanteAST generadorCodigo = new GeneradorCodigo();
+        ast.aceptar(generadorCodigo);
+        System.out.println("Confirmación [Fase Generación de Código]: Generación de código completada con éxito.");
+
+        // Guarda el código generado en un archivo
+        new GuardaCodigoSh(((GeneradorCodigo) generadorCodigo).obtenerCodigo(), ((GeneradorCodigo) generadorCodigo).obtenerTablaSimbolos());
 
     }
 

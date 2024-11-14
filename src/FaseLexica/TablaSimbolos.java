@@ -53,6 +53,10 @@ public class TablaSimbolos {
         simbolos.remove(nombre);
     }
 
+    public Map<String, InformacionSimbolo> obtenerSimbolos() {
+        return simbolos;
+    }
+
     // Imprime la tabla de simbolos
     public void imprimir() {
         for (Map.Entry<String, InformacionSimbolo> entry : simbolos.entrySet()) {
