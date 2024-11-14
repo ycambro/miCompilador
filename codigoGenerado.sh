@@ -18,4 +18,3 @@ t6=$t11
 echo "El valor de a es: $t0"
 echo "El valor de b es: $t2"
 echo "El valor de c es: $t6"
-echo "El valor de c es: $t6"
