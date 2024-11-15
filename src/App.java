@@ -15,7 +15,7 @@ import FaseGeneracionCodigo.GuardaCodigoSh;
 public class App {
     public static void main(String[] args) {
         //Espera el argumento de la ruta del archivo
-        if (args.length != 1) {
+        if (args.length < 1) {
             System.out.println("Uso: [NOMBRE DEL PROGRAMA] [ARCHIVO DE ENTRADA]");
             return;
         }
