@@ -37,13 +37,14 @@ public class GeneradorCodigo implements IVisitanteAST {
         String operador = nodo.obtenerValor();
         if (operador.equals("=")) {
             // Asignación
-            System.out.println(listaTemporales.get(listaTemporales.size()-2) + " " + operador + " " + listaTemporales.get(listaTemporales.size()-1));
+            System.out.println(listaTemporales.get(listaTemporales.size()-2) + operador + "$" + listaTemporales.get(listaTemporales.size()-1));
             codigo.add(listaTemporales.get(listaTemporales.size()-2) + operador + "$" + listaTemporales.get(listaTemporales.size()-1));
             listaTemporales.removeLast();
         } else {
             // Operaciones aritméticas
             String temp1 = obtenerTemporal();
-            System.out.println(temp1 + " = " + listaTemporales.get(listaTemporales.size()-2) + " " + operador + " " + listaTemporales.get(listaTemporales.size()-1));
+            System.out.println(temp1 + "=$((" + listaTemporales.get(listaTemporales.size()-2) + " " + operador + " " + listaTemporales.get(listaTemporales.size()-1) + "))");
+
             codigo.add(temp1 + "=$((" + listaTemporales.get(listaTemporales.size()-2) + " " + operador + " " + listaTemporales.get(listaTemporales.size()-1) + "))");
 
             // Se eliminan los dos últimos temporales y se agrega el nuevo temporal
@@ -57,7 +58,7 @@ public class GeneradorCodigo implements IVisitanteAST {
     public void visitar(NodoNumero nodo) {
         // En este caso simplemente se usa el número tal cual
         String temp = obtenerTemporal();
-        System.out.println(temp + " = " + nodo.obtenerValor());
+        System.out.println(temp + "=" + nodo.obtenerValor());
         codigo.add(temp + "=" + nodo.obtenerValor());
         listaTemporales.add(temp);
     }
@@ -67,13 +68,13 @@ public class GeneradorCodigo implements IVisitanteAST {
         // Para identificadores simplemente se usa el nombre
         String temp = obtenerTemporal();
         if (!tablaSimbolos.existe(nodo.obtenerValor())) {
-            System.out.println(temp + " = " + nodo.obtenerValor());
+            System.out.println(temp + "=" + nodo.obtenerValor());
             codigo.add(temp + "=" + nodo.obtenerValor());
             
             listaTemporales.add(temp);
             tablaSimbolos.agregar(nodo.obtenerValor(), new InformacionSimbolo(temp));
         } else {
-            System.out.println(temp + " = " + tablaSimbolos.obtenerInformacionSimbolo(nodo.obtenerValor()).getTemp());
+            System.out.println(temp + "=$" + tablaSimbolos.obtenerInformacionSimbolo(nodo.obtenerValor()).getTemp());
             codigo.add(temp + "=$" + tablaSimbolos.obtenerInformacionSimbolo(nodo.obtenerValor()).getTemp());
             listaTemporales.add(temp);
         }
