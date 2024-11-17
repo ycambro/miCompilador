@@ -16,11 +16,14 @@ public class GuardaCodigoSh {
         try {
             writer = new BufferedWriter (new FileWriter("codigoGenerado.sh"));
             writer.write("#!/bin/bash\n\n"); // Escribir el encabezado del archivo bash
+
+            // Escribir el código generado
             for (String linea : codigo) {
                 writer.write(linea);
                 writer.newLine();
             }
 
+            // Escribir la impresión en bash de los valores de los identificadores
             for (Map.Entry<String, InformacionSimbolo> entry : tablaSimbolos.obtenerSimbolos().entrySet()) {
                 InformacionSimbolo informacion = entry.getValue();
                 writer.write("echo \"El valor de " + entry.getKey() + " es: $" + informacion.getTemp() +"\"");

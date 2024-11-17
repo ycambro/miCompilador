@@ -33,7 +33,7 @@ public class GeneradorCodigo implements IVisitanteAST {
         izquierdo.aceptar(this);
         derecho.aceptar(this);
 
-        // Generar el código de operación en base al operador
+        // Generar el código de operación en base a si es asignación o operación aritmética
         String operador = nodo.obtenerValor();
         if (operador.equals("=")) {
             // Asignación
@@ -44,7 +44,6 @@ public class GeneradorCodigo implements IVisitanteAST {
             // Operaciones aritméticas
             String temp1 = obtenerTemporal();
             System.out.println(temp1 + "=$((" + listaTemporales.get(listaTemporales.size()-2) + " " + operador + " " + listaTemporales.get(listaTemporales.size()-1) + "))");
-
             codigo.add(temp1 + "=$((" + listaTemporales.get(listaTemporales.size()-2) + " " + operador + " " + listaTemporales.get(listaTemporales.size()-1) + "))");
 
             // Se eliminan los dos últimos temporales y se agrega el nuevo temporal
@@ -67,10 +66,11 @@ public class GeneradorCodigo implements IVisitanteAST {
     public void visitar(NodoIdentificador nodo) {
         // Para identificadores simplemente se usa el nombre
         String temp = obtenerTemporal();
+
+        // Si no existe en la tabla de símbolos, se agrega
         if (!tablaSimbolos.existe(nodo.obtenerValor())) {
             System.out.println(temp + "=" + nodo.obtenerValor());
             codigo.add(temp + "=" + nodo.obtenerValor());
-            
             listaTemporales.add(temp);
             tablaSimbolos.agregar(nodo.obtenerValor(), new InformacionSimbolo(temp));
         } else {
@@ -90,7 +90,7 @@ public class GeneradorCodigo implements IVisitanteAST {
         return codigo;
     }
 
-    // Obtener la tabla de símbolos
+    // Obtener la tabla de símbolos de temporales
     public TablaSimbolos obtenerTablaSimbolos() {
         return tablaSimbolos;
     }
